@@ -29,23 +29,23 @@ pub struct Day2 {
 pub fn input_generator(input: &str) -> Vec<Day2> {
     input
         .lines()
-        .map(|line| {
-            let s: Vec<&str> = line.split(" ").into_iter().collect();
-            Day2 {
-                dir: Direction::from_str(s[0]).unwrap(),
-                amt: s[1].parse::<i32>().unwrap(),
-            }
+        .map(|line| line.split(" ").into_iter().collect::<Vec<&str>>())
+        .map(|s| Day2 {
+            dir: s[0].parse::<Direction>().unwrap(),
+            amt: s[1].parse::<i32>().unwrap(),
         })
         .collect()
 }
 
 #[aoc(day2, part1)]
 pub fn part1(input: &Vec<Day2>) -> i32 {
-    let (x, y) = input.iter().fold((0, 0), |(x, y), d| match d.dir {
-        Direction::Forward => (x + d.amt, y),
-        Direction::Up => (x, y - d.amt),
-        Direction::Down => (x, y + d.amt),
-    });
+    let (x, y) = input
+        .iter()
+        .fold((0, 0), |(x, y), Day2 { dir, amt }| match dir {
+            Direction::Forward => (x + amt, y),
+            Direction::Up => (x, y - amt),
+            Direction::Down => (x, y + amt),
+        });
     x * y
 }
 
@@ -53,10 +53,10 @@ pub fn part1(input: &Vec<Day2>) -> i32 {
 pub fn part2(input: &Vec<Day2>) -> i32 {
     let (x, y, _) = input
         .iter()
-        .fold((0, 0, 0), |(h, d, a), inst| match inst.dir {
-            Direction::Forward => (h + inst.amt, d + (a * inst.amt), a),
-            Direction::Up => (h, d, a - inst.amt),
-            Direction::Down => (h, d, a + inst.amt),
+        .fold((0, 0, 0), |(h, d, a), Day2 { dir, amt }| match dir {
+            Direction::Forward => (h + amt, d + (a * amt), a),
+            Direction::Up => (h, d, a - amt),
+            Direction::Down => (h, d, a + amt),
         });
     x * y
 }
