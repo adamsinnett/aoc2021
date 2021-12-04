@@ -10,6 +10,7 @@ trait Bingo {
 struct Board {
     squares: HashMap<(usize, usize), (bool, i32)>,
     values: HashMap<i32, (usize, usize)>,
+    won: bool
 }
 
 impl ToString for Board {
@@ -45,7 +46,7 @@ fn won_y(board: &Board, x: usize, y: usize) -> bool {
     }
 }
 
-impl Bingo for Board {
+impl Board {
     fn turn(&mut self, value: i32) -> () {
         if self.values.contains_key(&value) {
             let square: &(usize, usize) = self.values.get(&value).unwrap();
@@ -53,16 +54,14 @@ impl Bingo for Board {
         }
     }
 
-    fn won(&self) -> bool {
-        let mut won = false;
-
+    fn won(&mut self) -> bool {
         for n in 0..5 {
             if won_x(self, n, 0) || won_y(self, 0, n) {
-                won = true;
+                self.won = true;
                 break;
             }
         }
-        won
+        self.won
     }
 }
 
@@ -92,6 +91,7 @@ impl FromStr for Board {
         Ok(Board {
             squares: squares,
             values: values,
+            won: false
         })
     }
 }
@@ -168,11 +168,11 @@ pub fn part2(input: &Game) -> i32 {
     let mut num_winners = 0;
     for move_value in input.moves.iter() {
         for board in boards.iter_mut() {
-            if (board.won()) {
+            if board.won {
                 continue;
             }
             board.turn(*move_value);
-            
+
             if board.won() {
                 if (num_winners) == num_boards-1 {
                     winner = Some(board.clone());
