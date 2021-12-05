@@ -10,7 +10,7 @@ trait Bingo {
 struct Board {
     squares: HashMap<(usize, usize), (bool, i32)>,
     values: HashMap<i32, (usize, usize)>,
-    won: bool
+    won: bool,
 }
 
 impl ToString for Board {
@@ -91,7 +91,7 @@ impl FromStr for Board {
         Ok(Board {
             squares: squares,
             values: values,
-            won: false
+            won: false,
         })
     }
 }
@@ -103,7 +103,6 @@ pub struct Game {
 }
 
 fn score(board: Board, value: i32) -> i32 {
-
     let sum: i32 = board
         .squares
         .iter()
@@ -156,7 +155,10 @@ pub fn part1(input: &Game) -> i32 {
         }
     }
 
-    score(winner.expect("found a winning board"), last_value.expect("found a last value"))
+    score(
+        winner.expect("found a winning board"),
+        last_value.expect("found a last value"),
+    )
 }
 
 #[aoc(day4, part2)]
@@ -174,11 +176,11 @@ pub fn part2(input: &Game) -> i32 {
             board.turn(*move_value);
 
             if board.won() {
-                if (num_winners) == num_boards-1 {
+                if (num_winners) == num_boards - 1 {
                     winner = Some(board.clone());
                     break;
                 } else {
-                    num_winners+=1
+                    num_winners += 1
                 }
             }
         }
@@ -188,5 +190,8 @@ pub fn part2(input: &Game) -> i32 {
         }
     }
 
-    score(winner.expect("found a winning board"), last_value.expect("found a last value"))
+    score(
+        winner.expect("found a winning board"),
+        last_value.expect("found a last value"),
+    )
 }
