@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::collections::HashSet;
 
 #[aoc_generator(day9)]
@@ -20,21 +21,24 @@ fn get_value(input: &Vec<Vec<i32>>, x: usize, y: usize) -> i32 {
     }
 }
 
-fn find_low_points(input: &Vec<Vec<i32>>) -> Vec<(i32, usize, usize)> {
-    let mut low: Vec<(i32, usize, usize)> = Vec::new();
-    for x in 0..input.len() {
-        for y in 0..input.get(0).expect("vector").len() {
-            let cur = get_value(input, x, y);
-            if cur < get_value(input, x - 1, y)
-                && cur < get_value(input, x, y - 1)
-                && cur < get_value(input, x + 1, y)
-                && cur < get_value(input, x, y + 1)
-            {
-                low.push((cur, x, y))
-            }
-        }
+fn is_low(input: &Vec<Vec<i32>>, x: usize, y: usize) -> Option<(i32, usize, usize)> {
+    let cur = get_value(input, x, y);
+    if cur < get_value(input, x - 1, y)
+        && cur < get_value(input, x, y - 1)
+        && cur < get_value(input, x + 1, y)
+        && cur < get_value(input, x, y + 1)
+    {
+        Some((cur, x, y))
+    } else {
+        None
     }
-    low
+}
+
+fn find_low_points(input: &Vec<Vec<i32>>) -> Vec<(i32, usize, usize)> {
+    (0..input.len())
+        .cartesian_product(0..input[0].len())
+        .filter_map(|(x, y)| is_low(input, x, y))
+        .collect()
 }
 
 fn find_basin_size(
@@ -61,18 +65,17 @@ pub fn part1(input: &Vec<Vec<i32>>) -> i32 {
 }
 
 #[aoc(day9, part2)]
-pub fn part2(input: &Vec<Vec<i32>>) -> u32 {
+pub fn part2(input: &Vec<Vec<i32>>) -> usize {
     let mut basins: Vec<usize> = find_low_points(input)
         .iter()
         .map(|(_, x, y)| {
             let mut locations: HashSet<(usize, usize)> = HashSet::new();
             find_basin_size(input, &mut locations, *x, *y);
-            locations
+            locations.len()
         })
-        .map(|s| s.len())
         .collect();
     basins.sort();
     basins[basins.len() - 3..]
         .iter()
-        .fold(1, |acc, basin| acc * basin) as u32
+        .fold(1, |acc, basin| acc * basin) 
 }
