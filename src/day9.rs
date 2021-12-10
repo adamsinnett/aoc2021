@@ -77,5 +77,5 @@ pub fn part2(input: &Vec<Vec<i32>>) -> usize {
     basins.sort();
     basins[basins.len() - 3..]
         .iter()
-        .fold(1, |acc, basin| acc * basin) 
+        .fold(1, |acc, basin| acc * basin)
 }

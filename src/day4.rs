@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 trait Bingo {
-    fn turn(&mut self, value: i32) -> ();
+    fn turn(&mut self, value: i32);
     fn won(&self) -> bool;
 }
 
@@ -47,7 +47,7 @@ fn won_y(board: &Board, x: usize, y: usize) -> bool {
 }
 
 impl Board {
-    fn turn(&mut self, value: i32) -> () {
+    fn turn(&mut self, value: i32) {
         if self.values.contains_key(&value) {
             let square: &(usize, usize) = self.values.get(&value).unwrap();
             self.squares.insert(*square, (true, value));
@@ -89,8 +89,8 @@ impl FromStr for Board {
             }
         }
         Ok(Board {
-            squares: squares,
-            values: values,
+            squares,
+            values,
             won: false,
         })
     }
