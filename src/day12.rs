@@ -1,8 +1,10 @@
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use std::{collections::HashMap, convert::Infallible, str::FromStr};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Node {
-    value: String,
+    value: u64,
     is_small: bool,
     is_start: bool,
     is_end: bool,
@@ -12,8 +14,10 @@ impl FromStr for Node {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut hasher = DefaultHasher::new();
+        s.hash(&mut hasher);
         Ok(Node {
-            value: s.into(),
+            value: hasher.finish(),
             is_small: s.to_ascii_lowercase() == s,
             is_start: s == "start",
             is_end: s == "end",
