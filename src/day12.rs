@@ -52,7 +52,7 @@ fn walk_maze<'a>(maze: &'a Maze, node: &Node, visited: &mut Vec<&'a Node>) -> us
     maze.get(&node).unwrap().iter().fold(0, |mut acc, node| {
         if node.is_end {
             acc += 1;
-        } else if node.is_small && visited.contains(&node) || node.is_start {
+        } else if node.is_start || (node.is_small && visited.contains(&node)) {
             return acc;
         } else {
             visited.push(node);
@@ -70,15 +70,12 @@ fn walk_maze_part2<'a>(
     already_twice: bool,
 ) -> usize {
     maze.get(&node).unwrap().iter().fold(0, |mut acc, node| {
-        let has_visited_twice = if node.is_small {
-            visited.iter().any(|n| n == &node)
-        } else {
-            false
-        };
-
         if node.is_end {
             acc += 1;
-        } else if node.is_start || (has_visited_twice && already_twice) {
+            return acc;
+        }
+        let has_visited_twice = node.is_small && visited.iter().any(|n| n == &node);
+        if node.is_start || (has_visited_twice && already_twice) {
             return acc;
         } else {
             visited.push(node);
